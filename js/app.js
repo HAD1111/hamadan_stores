@@ -1,183 +1,397 @@
+/**
+ * Hamadan Stores — Shared Application Logic & Navigation
+ * Handles cart persistence, mobile navigation, search drawer, cart drawer, and notifications.
+ */
 (() => {
-  const products = window.HAMADAN_PRODUCTS || [];
+  const CART_KEY = 'hamadan-demo-cart-v1';
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
-  const money = value => `$${Number(value).toFixed(2)}`;
-  const CART_KEY = 'hamadan-demo-cart-v1';
-  let activeFilter = 'All';
-  let searchQuery = '';
-  const PAGE_SIZE = 20;
-  let visibleLimit = PAGE_SIZE;
-  let renderTimer = null;
-  let cart = readCart();
-  let toastTimer;
+  const money = value => `$${Number(value || 0).toFixed(2)}`;
 
+  let toastTimer = null;
+  const cartListeners = [];
+
+  // 1. Centralized Cart Management
   function readCart() {
-    try { return JSON.parse(localStorage.getItem(CART_KEY) || '[]'); }
-    catch { return []; }
+    try {
+      const data = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+      return Array.isArray(data) ? data : [];
+    } catch {
+      return [];
+    }
   }
-  function saveCart() {
-    try { localStorage.setItem(CART_KEY, JSON.stringify(cart)); } catch { /* storage may be unavailable */ }
+
+  function saveCart(cartData) {
+    try {
+      localStorage.setItem(CART_KEY, JSON.stringify(cartData));
+    } catch {
+      /* localStorage may be disabled or full */
+    }
   }
-  function toast(message) {
-    const node = $('#toast');
+
+  let cart = readCart();
+
+  function notifyCartListeners() {
+    saveCart(cart);
+    updateCartUI();
+    cartListeners.forEach(listener => {
+      try { listener(cart); } catch (e) { console.error('Cart listener error:', e); }
+    });
+  }
+
+  const HamadanCart = {
+    getCart() {
+      return [...cart];
+    },
+    getCount() {
+      return cart.reduce((sum, item) => sum + (Number(item.quantity) || 1), 0);
+    },
+    getTotal() {
+      return cart.reduce((sum, item) => sum + (Number(item.price) || 0) * (Number(item.quantity) || 1), 0);
+    },
+    addToCart(product, size = '', color = '', quantity = 1) {
+      if (!product || !product.id) return;
+      const selectedSize = size || product.sizes?.[0] || 'Standard';
+      const selectedColor = color || product.colors?.[0] || 'Standard';
+      const key = `${product.id}|${selectedSize}|${selectedColor}`;
+      const existing = cart.find(item => item.key === key);
+
+      const parsedQty = Math.max(1, parseInt(quantity, 10) || 1);
+
+      if (existing) {
+        existing.quantity += parsedQty;
+      } else {
+        cart.push({
+          key,
+          id: product.id,
+          sku: product.sku || `HAM-${product.id.toUpperCase()}`,
+          name: product.name,
+          category: product.category,
+          price: Number(product.price) || 0,
+          image: product.image,
+          size: selectedSize,
+          color: selectedColor,
+          quantity: parsedQty
+        });
+      }
+
+      notifyCartListeners();
+      showToast(`Added "${product.name}" (${selectedSize}, ${selectedColor}) to your bag`);
+    },
+    updateQuantity(key, delta) {
+      const item = cart.find(entry => entry.key === key);
+      if (!item) return;
+      item.quantity += Number(delta);
+      if (item.quantity <= 0) {
+        cart = cart.filter(entry => entry.key !== key);
+      }
+      notifyCartListeners();
+    },
+    setItemQuantity(key, quantity) {
+      const item = cart.find(entry => entry.key === key);
+      if (!item) return;
+      const qty = parseInt(quantity, 10);
+      if (isNaN(qty) || qty <= 0) {
+        cart = cart.filter(entry => entry.key !== key);
+      } else {
+        item.quantity = Math.min(99, qty);
+      }
+      notifyCartListeners();
+    },
+    removeItem(key) {
+      cart = cart.filter(item => item.key !== key);
+      notifyCartListeners();
+      showToast('Item removed from shopping bag');
+    },
+    clearCart() {
+      cart = [];
+      notifyCartListeners();
+    },
+    subscribe(callback) {
+      if (typeof callback === 'function') {
+        cartListeners.push(callback);
+      }
+    }
+  };
+
+  // Expose Cart API globally for shop.js, product.js, cart.js, checkout.js
+  window.HamadanCart = HamadanCart;
+  window.formatMoney = money;
+
+  // 2. Toast Notifications
+  function showToast(message) {
+    let node = $('#toast');
+    if (!node) {
+      node = document.createElement('div');
+      node.id = 'toast';
+      node.className = 'toast';
+      node.setAttribute('role', 'status');
+      node.setAttribute('aria-live', 'polite');
+      document.body.appendChild(node);
+    }
     node.textContent = message;
     node.classList.add('is-visible');
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => node.classList.remove('is-visible'), 2600);
+    toastTimer = setTimeout(() => {
+      node.classList.remove('is-visible');
+    }, 2800);
   }
-  function productCard(product) {
-    return `<article class="product-card">
-      <div class="product-image-wrap"><a class="product-image-link" href="#shop" data-product="${product.id}" aria-label="View ${product.name}"><img src="${product.image}" alt="${product.name} — sample product image" loading="lazy"><span class="product-badge">${product.badge || 'FEATURED'}</span></a><button class="quick-add" type="button" data-add="${product.id}" aria-label="Add ${product.name} to bag">＋ <span>Quick add</span></button></div>
-      <div class="product-card-info"><div class="product-meta"><span>${product.category}</span><button class="save-product" type="button" aria-label="Save ${product.name}" data-save="${product.id}">♡</button></div><a class="product-name" href="#shop" data-product="${product.id}">${product.name}</a><div class="product-price">${money(product.price)} <small>sample price</small></div></div>
-    </article>`;
-  }
-  function renderProducts() {
-    const grid = $('#productGrid');
-    if (!grid) return;
-    const filtered = products.filter(product => {
-      const matchesCategory = activeFilter === 'All' || product.category === activeFilter;
-      const haystack = `${product.name} ${product.category} ${product.description}`.toLowerCase();
-      return matchesCategory && haystack.includes(searchQuery.toLowerCase());
-    });
-    const visible = filtered.slice(0, visibleLimit);
-    grid.setAttribute('aria-busy', 'true');
-    grid.innerHTML = Array.from({length: Math.min(8, Math.max(4, visible.length))}, () =>
-      '<div class="product-skeleton" aria-hidden="true"><div class="skeleton-image"></div><div class="skeleton-line skeleton-line-short"></div><div class="skeleton-line"></div><div class="skeleton-line skeleton-line-price"></div></div>'
-    ).join('');
-    clearTimeout(renderTimer);
-    renderTimer = window.setTimeout(() => {
-      grid.innerHTML = visible.length ? visible.map(productCard).join('') : `<div class="no-results"><h3>No matching products</h3><p>Try another search or category.</p><button class="button button-outline" data-reset-filters>Clear filters</button></div>`;
-      grid.setAttribute('aria-busy', 'false');
-      let more = $('#loadMoreProducts');
-      if (!more) {
-        more = document.createElement('button');
-        more.id = 'loadMoreProducts';
-        more.className = 'button button-outline load-more-products';
-        more.type = 'button';
-        grid.insertAdjacentElement('afterend', more);
-        more.addEventListener('click', () => { visibleLimit += PAGE_SIZE; renderProducts(); });
-      }
-      more.hidden = filtered.length <= visibleLimit;
-      more.textContent = `Load ${PAGE_SIZE} more products`;
-      $('#productCount').textContent = `${visible.length} of ${filtered.length} sample products${searchQuery ? ' matching your search' : ''}`;
-      $$('.filter-chip').forEach(button => {
-        const selected = button.dataset.filter === activeFilter;
-        button.classList.toggle('active', selected);
-        button.setAttribute('aria-pressed', String(selected));
-      });
-    }, 260);
-  }
-  function setFilter(category) {
-    activeFilter = ['Women','Men','Kids','Shoes'].includes(category) ? category : 'All';
-    searchQuery = '';
-    visibleLimit = PAGE_SIZE;
-    $('#siteSearch').value = '';
-    renderProducts();
-    $('#shop')?.scrollIntoView({behavior:'smooth', block:'start'});
-    closeMobileMenu();
-  }
-  function openSearch() {
-    const panel = $('#searchPanel');
-    panel.hidden = false;
-    $('#siteSearch').focus();
-  }
-  function closeMobileMenu() {
-    $('#mainNav').classList.remove('nav-open');
-    $('#mobileMenuToggle').setAttribute('aria-expanded', 'false');
-  }
-  function cartCount() { return cart.reduce((sum, item) => sum + item.quantity, 0); }
-  function cartTotal() { return cart.reduce((sum, item) => sum + item.price * item.quantity, 0); }
+  window.showToast = showToast;
+
+  // 3. Update Cart Badge & Drawer UI (if present)
   function updateCartUI() {
-    const count = cartCount();
-    $('#cartCount').textContent = count;
-    $('#drawerCartCount').textContent = `(${count})`;
-    $('#cartItems').innerHTML = cart.map(item => `<article class="cart-line"><img src="${item.image}" alt="${item.name}"><div class="cart-line-info"><strong>${item.name}</strong><small>${item.category} · ${item.size || 'Size not selected'} · ${item.color || 'Color not selected'}</small><div class="quantity-control"><button type="button" data-quantity="${item.key}" data-change="-1" aria-label="Decrease quantity">−</button><span>${item.quantity}</span><button type="button" data-quantity="${item.key}" data-change="1" aria-label="Increase quantity">+</button><button class="remove-item" type="button" data-remove="${item.key}">Remove</button></div></div><strong class="cart-line-price">${money(item.price * item.quantity)}</strong></article>`).join('');
-    $('#cartSubtotal').textContent = money(cartTotal());
-    $('#cartEmpty').hidden = cart.length > 0;
-    $('#drawerFooter').hidden = cart.length === 0;
-    const lines = cart.map(item => `• ${item.name} (${item.size || 'size n/a'}, ${item.color || 'color n/a'}) x${item.quantity} — ${money(item.price * item.quantity)}`).join('\n');
-    const message = `Hello Hamadan Stores! I'd like to ask about these demo items:\n${lines}\n\nDemo subtotal: ${money(cartTotal())}\nPlease confirm actual availability, final prices, and delivery cost.`;
-    $('#whatsappCheckout').href = `https://wa.me/96176010841?text=${encodeURIComponent(message)}`;
-    saveCart();
+    const count = HamadanCart.getCount();
+    const total = HamadanCart.getTotal();
+
+    // Update header badges
+    const headerCount = $('#cartCount');
+    if (headerCount) headerCount.textContent = count;
+
+    $$('.mobile-cart-badge').forEach(badge => {
+      badge.textContent = count;
+    });
+
+    // Update Drawer if present
+    const drawerCount = $('#drawerCartCount');
+    if (drawerCount) drawerCount.textContent = `(${count})`;
+
+    const drawerItems = $('#cartItems');
+    if (drawerItems) {
+      drawerItems.innerHTML = cart.map(item => `
+        <article class="cart-line">
+          <img src="${item.image}" alt="${item.name}">
+          <div class="cart-line-info">
+            <strong>${item.name}</strong>
+            <small>${item.category} · Size: ${item.size} · Color: ${item.color}</small>
+            <div class="quantity-control">
+              <button type="button" data-cart-action="dec" data-key="${item.key}" aria-label="Decrease quantity">−</button>
+              <span>${item.quantity}</span>
+              <button type="button" data-cart-action="inc" data-key="${item.key}" aria-label="Increase quantity">+</button>
+              <button class="remove-item" type="button" data-cart-action="remove" data-key="${item.key}">Remove</button>
+            </div>
+          </div>
+          <strong class="cart-line-price">${money(item.price * item.quantity)}</strong>
+        </article>
+      `).join('');
+    }
+
+    const drawerSubtotal = $('#cartSubtotal');
+    if (drawerSubtotal) drawerSubtotal.textContent = money(total);
+
+    const drawerEmpty = $('#cartEmpty');
+    if (drawerEmpty) drawerEmpty.hidden = cart.length > 0;
+
+    const drawerFooter = $('#drawerFooter');
+    if (drawerFooter) drawerFooter.hidden = cart.length === 0;
+
+    const whatsappCheckout = $('#whatsappCheckout');
+    if (whatsappCheckout) {
+      const lines = cart.map(item => `• ${item.name} (${item.size}, ${item.color}) x${item.quantity} — ${money(item.price * item.quantity)}`).join('\n');
+      const message = `Hello Hamadan Stores! I would like to inquire about these items in my shopping bag:\n\n${lines}\n\nEstimated Subtotal: ${money(total)}\nPlease confirm item availability and delivery/pickup arrangements.`;
+      whatsappCheckout.href = `https://wa.me/96176010841?text=${encodeURIComponent(message)}`;
+    }
   }
+
+  // 4. Drawer open / close handlers
   function openCart() {
-    $('#cartDrawer').classList.add('drawer-open');
-    $('#cartDrawer').setAttribute('aria-hidden', 'false');
-    $('#drawerBackdrop').hidden = false;
+    const drawer = $('#cartDrawer');
+    const backdrop = $('#drawerBackdrop');
+    if (!drawer) {
+      window.location.href = 'cart.html';
+      return;
+    }
+    drawer.classList.add('drawer-open');
+    drawer.setAttribute('aria-hidden', 'false');
+    if (backdrop) backdrop.hidden = false;
     document.body.classList.add('no-scroll');
-    $('#cartClose').focus();
+    const closeBtn = $('#cartClose');
+    if (closeBtn) closeBtn.focus();
   }
+
   function closeCart() {
-    $('#cartDrawer').classList.remove('drawer-open');
-    $('#cartDrawer').setAttribute('aria-hidden', 'true');
-    $('#drawerBackdrop').hidden = true;
+    const drawer = $('#cartDrawer');
+    const backdrop = $('#drawerBackdrop');
+    if (drawer) {
+      drawer.classList.remove('drawer-open');
+      drawer.setAttribute('aria-hidden', 'true');
+    }
+    if (backdrop) backdrop.hidden = true;
     document.body.classList.remove('no-scroll');
   }
-  function addToCart(product, size = product.sizes?.[0] || '', color = product.colors?.[0] || '') {
-    const key = `${product.id}|${size}|${color}`;
-    const existing = cart.find(item => item.key === key);
-    if (existing) existing.quantity += 1;
-    else cart.push({key, id:product.id, name:product.name, category:product.category, price:product.price, image:product.image, size, color, quantity:1});
-    updateCartUI();
-    toast(`${product.name} added to your bag`);
-  }
-  function showProduct(product) {
-    const sizes = product.sizes || [];
-    const colors = product.colors || [];
-    const sizeOptions = sizes.map((size, index) => `<label class="choice-pill"><input type="radio" name="productSize" value="${size}" ${index === 0 ? 'checked' : ''}><span>${size}</span></label>`).join('');
-    const colorMap = {Black:'#222222', White:'#ffffff', Grey:'#999999', Beige:'#d6c5b3', Oatmeal:'#d8c8b6', Stone:'#a9a095', Olive:'#6e7651', Red:'#c93434', Cream:'#f0e7d8', Blue:'#567da8', Sand:'#d6c5b3', Sage:'#9ca88d'};
-    const colorOptions = colors.map((color, index) => `<label class="choice-pill color-choice"><input type="radio" name="productColor" value="${color}" ${index === 0 ? 'checked' : ''}><span><i class="color-swatch" style="--swatch:${colorMap[color] || '#c8b9a8'}"></i>${color}</span></label>`).join('');
-    const overlay = document.createElement('div');
-    overlay.className = 'product-modal-backdrop';
-    overlay.innerHTML = `<section class="product-modal" role="dialog" aria-modal="true" aria-label="${product.name}"><button class="icon-button modal-close" aria-label="Close product details">×</button><div class="modal-product-image"><img src="${product.image}" alt="${product.name} sample image"></div><div class="modal-product-info"><p class="eyebrow">${product.category} · SAMPLE ITEM</p><h2>${product.name}</h2><p class="modal-price">${money(product.price)}</p><p>${product.description}</p><p class="demo-inline-note">Sample item and price for presentation only. Actual options and availability must be confirmed by the store.</p><fieldset class="choice-group"><legend>Choose size</legend><div class="choice-options">${sizeOptions}</div></fieldset><fieldset class="choice-group"><legend>Choose color</legend><div class="choice-options color-options">${colorOptions}</div></fieldset><button class="button button-dark button-full modal-add">Add to bag <span>＋</span></button><a class="modal-whatsapp" href="https://wa.me/96176010841" target="_blank" rel="noopener">Ask about this item on WhatsApp ↗</a></div></section>`;
-    document.body.appendChild(overlay);
-    document.body.classList.add('no-scroll');
-    const close = () => { overlay.remove(); document.body.classList.remove('no-scroll'); };
-    $('.modal-close', overlay).addEventListener('click', close);
-    overlay.addEventListener('click', event => { if (event.target === overlay) close(); });
-    $('.modal-add', overlay).addEventListener('click', () => { addToCart(product, $('input[name="productSize"]:checked', overlay)?.value || '', $('input[name="productColor"]:checked', overlay)?.value || ''); close(); openCart(); });
-    document.addEventListener('keydown', function esc(event) { if (event.key === 'Escape' && document.body.contains(overlay)) { close(); document.removeEventListener('keydown', esc); } });
-    $('.modal-close', overlay).focus();
-  }
-  function handleCheckout() {
-    toast('Demo checkout only — no order or payment has been submitted.');
-    const message = 'Hello Hamadan Stores! I would like to ask about placing an order and delivery. Please confirm actual product availability, final pricing, and delivery fees.';
-    window.open(`https://wa.me/96176010841?text=${encodeURIComponent(message)}`, '_blank', 'noopener');
+
+  // 5. Mobile Navigation
+  function closeMobileMenu() {
+    const nav = $('#mainNav');
+    const toggle = $('#mobileMenuToggle');
+    if (nav) nav.classList.remove('nav-open');
+    if (toggle) toggle.setAttribute('aria-expanded', 'false');
   }
 
+  // 6. Active Nav Link Detection
+  function syncActiveNav() {
+    const currentPath = window.location.pathname.toLowerCase();
+    const urlParams = new URLSearchParams(window.location.search);
+    const categoryParam = urlParams.get('category');
+
+    $$('.main-nav .nav-link').forEach(link => {
+      link.classList.remove('active');
+      const navTag = link.dataset.nav;
+
+      if (!categoryParam && (currentPath.endsWith('index.html') || currentPath.endsWith('/') || currentPath === '')) {
+        if (navTag === 'home') link.classList.add('active');
+      } else if (currentPath.endsWith('shop.html')) {
+        if (!categoryParam && navTag === 'shop') link.classList.add('active');
+        if (categoryParam && categoryParam.toLowerCase() === navTag) link.classList.add('active');
+      } else if (currentPath.endsWith('branches.html') && navTag === 'branches') {
+        link.classList.add('active');
+      } else if (currentPath.endsWith('about.html') && navTag === 'about') {
+        link.classList.add('active');
+      } else if (currentPath.endsWith('contact.html') && navTag === 'contact') {
+        link.classList.add('active');
+      }
+    });
+  }
+
+  // 7. Search handling
+  function handleSearchSubmit() {
+    const input = $('#siteSearch');
+    if (!input) return;
+    const query = input.value.trim();
+    if (!query) return;
+
+    const currentPath = window.location.pathname.toLowerCase();
+    if (currentPath.endsWith('shop.html')) {
+      // Dispatches custom event for shop.js
+      window.dispatchEvent(new CustomEvent('hamadan:search', { detail: { query } }));
+      const searchPanel = $('#searchPanel');
+      if (searchPanel) searchPanel.hidden = true;
+    } else {
+      window.location.href = `shop.html?search=${encodeURIComponent(query)}`;
+    }
+  }
+
+  // 8. Event Delegations
   document.addEventListener('click', event => {
-    const categoryLink = event.target.closest('[data-category-link]');
-    if (categoryLink) { event.preventDefault(); setFilter(categoryLink.dataset.categoryLink); return; }
-    const addButton = event.target.closest('[data-add]');
-    if (addButton) { const product = products.find(item => item.id === addButton.dataset.add); if (product) addToCart(product); return; }
-    const productLink = event.target.closest('[data-product]');
-    if (productLink) { event.preventDefault(); const product = products.find(item => item.id === productLink.dataset.product); if (product) showProduct(product); return; }
-    const filterButton = event.target.closest('[data-filter]');
-    if (filterButton) { activeFilter = filterButton.dataset.filter; visibleLimit = PAGE_SIZE; renderProducts(); return; }
-    const quantityButton = event.target.closest('[data-quantity]');
-    if (quantityButton) { const item = cart.find(entry => entry.key === quantityButton.dataset.quantity); if (item) { item.quantity += Number(quantityButton.dataset.change); if (item.quantity <= 0) cart = cart.filter(entry => entry.key !== item.key); updateCartUI(); } return; }
-    const removeButton = event.target.closest('[data-remove]');
-    if (removeButton) { cart = cart.filter(item => item.key !== removeButton.dataset.remove); updateCartUI(); return; }
-    if (event.target.closest('[data-reset-filters]')) { activeFilter = 'All'; visibleLimit = PAGE_SIZE; searchQuery = ''; $('#siteSearch').value = ''; renderProducts(); return; }
-    if (event.target.closest('[data-save]')) { toast('Saved-item lists are a visual demo feature and are not stored yet.'); return; }
+    // Drawer actions
+    const cartActionBtn = event.target.closest('[data-cart-action]');
+    if (cartActionBtn) {
+      const action = cartActionBtn.dataset.cartAction;
+      const key = cartActionBtn.dataset.key;
+      if (action === 'inc') HamadanCart.updateQuantity(key, 1);
+      else if (action === 'dec') HamadanCart.updateQuantity(key, -1);
+      else if (action === 'remove') HamadanCart.removeItem(key);
+      return;
+    }
+
+    // Direct Add to Cart buttons
+    const addBtn = event.target.closest('[data-quick-add]');
+    if (addBtn) {
+      const productId = addBtn.dataset.quickAdd;
+      const catalog = window.HAMADAN_PRODUCTS || [];
+      const product = catalog.find(p => p.id === productId);
+      if (product) {
+        HamadanCart.addToCart(product);
+      }
+      return;
+    }
+
+    // Wishlist demo click
+    if (event.target.closest('[data-save]')) {
+      showToast('Saved items wishlist is a demo visual preview');
+      return;
+    }
+
+    // Close mobile nav when clicking a nav link
+    if (event.target.closest('.main-nav a')) {
+      closeMobileMenu();
+    }
   });
 
-  $('#mobileMenuToggle').addEventListener('click', () => {
-    const nav = $('#mainNav'); const open = nav.classList.toggle('nav-open');
-    $('#mobileMenuToggle').setAttribute('aria-expanded', String(open));
+  // DOM ready bindings
+  document.addEventListener('DOMContentLoaded', () => {
+    syncActiveNav();
+    updateCartUI();
+
+    // Mobile menu toggle
+    const mobileToggle = $('#mobileMenuToggle');
+    if (mobileToggle) {
+      mobileToggle.addEventListener('click', () => {
+        const nav = $('#mainNav');
+        const isOpen = nav.classList.toggle('nav-open');
+        mobileToggle.setAttribute('aria-expanded', String(isOpen));
+      });
+    }
+
+    // Search toggle
+    const searchToggle = $('#searchToggle');
+    const searchPanel = $('#searchPanel');
+    const searchInput = $('#siteSearch');
+    const searchSubmit = $('#searchSubmit');
+
+    if (searchToggle && searchPanel) {
+      searchToggle.addEventListener('click', () => {
+        searchPanel.hidden = !searchPanel.hidden;
+        if (!searchPanel.hidden && searchInput) {
+          searchInput.focus();
+        }
+      });
+    }
+
+    if (searchSubmit) {
+      searchSubmit.addEventListener('click', handleSearchSubmit);
+    }
+
+    if (searchInput) {
+      searchInput.addEventListener('keydown', event => {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          handleSearchSubmit();
+        } else if (event.key === 'Escape' && searchPanel) {
+          searchPanel.hidden = true;
+        }
+      });
+    }
+
+    // Cart Drawer triggers
+    const cartToggle = $('#cartToggle');
+    if (cartToggle) cartToggle.addEventListener('click', openCart);
+
+    const cartClose = $('#cartClose');
+    if (cartClose) cartClose.addEventListener('click', closeCart);
+
+    const drawerBackdrop = $('#drawerBackdrop');
+    if (drawerBackdrop) drawerBackdrop.addEventListener('click', closeCart);
+
+    const continueShopping = $('#continueShopping');
+    if (continueShopping) continueShopping.addEventListener('click', closeCart);
+
+    const drawerCheckoutBtn = $('#checkoutButton');
+    if (drawerCheckoutBtn) {
+      drawerCheckoutBtn.addEventListener('click', () => {
+        window.location.href = 'checkout.html';
+      });
+    }
+
+    // Dismiss Demo Banner
+    const dismissBanner = $('#dismissDemoBanner');
+    if (dismissBanner) {
+      dismissBanner.addEventListener('click', () => {
+        const banner = $('.demo-banner');
+        if (banner) banner.remove();
+      });
+    }
+
+    // Escape key listener for overlays
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        closeCart();
+        closeMobileMenu();
+        if (searchPanel) searchPanel.hidden = true;
+      }
+    });
+
+    // Dynamic current year
+    const yearSpan = $('#currentYear');
+    if (yearSpan) yearSpan.textContent = new Date().getFullYear();
   });
-  $('#searchToggle').addEventListener('click', () => { const panel = $('#searchPanel'); if (panel.hidden) openSearch(); else panel.hidden = true; });
-  $('#searchSubmit').addEventListener('click', () => { searchQuery = $('#siteSearch').value.trim(); activeFilter = 'All'; visibleLimit = PAGE_SIZE; renderProducts(); $('#shop')?.scrollIntoView({behavior:'smooth'}); $('#searchPanel').hidden = true; });
-  $('#siteSearch').addEventListener('keydown', event => { if (event.key === 'Enter') $('#searchSubmit').click(); if (event.key === 'Escape') $('#searchPanel').hidden = true; });
-  $('#cartToggle').addEventListener('click', openCart);
-  $('#cartClose').addEventListener('click', closeCart);
-  $('#drawerBackdrop').addEventListener('click', closeCart);
-  $('#continueShopping').addEventListener('click', closeCart);
-  $('#checkoutButton').addEventListener('click', handleCheckout);
-  $('#dismissDemoBanner').addEventListener('click', () => $('.demo-banner').remove());
-  document.addEventListener('keydown', event => { if (event.key === 'Escape') { closeCart(); $('#searchPanel').hidden = true; closeMobileMenu(); } });
-  $('#currentYear').textContent = new Date().getFullYear();
-  renderProducts();
-  updateCartUI();
 })();

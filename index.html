@@ -4,100 +4,362 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#222222">
-  <meta name="description" content="Discover clothing and shoes for the whole family at Hamadan Stores. Visit our branches or contact us on WhatsApp.">
+  <meta name="description" content="Discover clothing and footwear for women, men, kids, and shoes at Hamadan Stores. Visit our three branches in Lebanon or contact us on WhatsApp.">
   <title>Hamadan Stores — Style for Every Generation</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
   <script src="js/products.js" defer></script>
   <script src="js/app.js" defer></script>
+  <script src="js/home.js" defer></script>
 </head>
 <body>
+  <!-- Announcement Bar -->
   <div class="announcement-bar">
     <div class="announcement-inner">
-      <span class="announcement-message">Style for every generation</span>
-      <a class="announcement-whatsapp" href="https://wa.me/96176010841" target="_blank" rel="noopener"> <span class="whatsapp-dot">●</span> WhatsApp: 76 010 841</a>
+      <span class="announcement-message">Style for every generation · Rayak · Douris · Taalabaya</span>
+      <a class="announcement-whatsapp" href="https://wa.me/96176010841" target="_blank" rel="noopener">
+        <span class="whatsapp-dot">●</span> WhatsApp: +961 76 010 841
+      </a>
     </div>
   </div>
 
+  <!-- Shared Site Header -->
   <header class="site-header" id="top">
     <div class="header-main container">
-      <button class="icon-button mobile-menu-toggle" id="mobileMenuToggle" aria-label="Open navigation" aria-expanded="false"><span class="menu-lines"></span></button>
-      <a class="wordmark" href="#top" aria-label="Hamadan Stores home"><span>HAMADAN</span><small>STORES</small></a>
+      <button class="icon-button mobile-menu-toggle" id="mobileMenuToggle" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mainNav">
+        <span class="menu-lines"></span>
+      </button>
+      <a class="wordmark" href="index.html" aria-label="Hamadan Stores home">
+        <span>HAMADAN</span><small>STORES</small>
+      </a>
       <nav class="main-nav" id="mainNav" aria-label="Main navigation">
-        <a class="nav-link active" href="#top">Home</a>
-        <a class="nav-link" href="#shop" data-category-link="Women">Women</a>
-        <a class="nav-link" href="#shop" data-category-link="Men">Men</a>
-        <a class="nav-link" href="#shop" data-category-link="Kids">Kids</a>
-        <a class="nav-link" href="#shop" data-category-link="Shoes">Shoes</a>
-        <a class="nav-link" href="#new-arrivals">New arrivals</a>
-        <a class="nav-link" href="#featured-offer">Offers</a>
+        <a class="nav-link" href="index.html" data-nav="home">Home</a>
+        <a class="nav-link" href="shop.html" data-nav="shop">Shop</a>
+        <a class="nav-link" href="shop.html?category=Women" data-nav="women">Women</a>
+        <a class="nav-link" href="shop.html?category=Men" data-nav="men">Men</a>
+        <a class="nav-link" href="shop.html?category=Kids" data-nav="kids">Kids</a>
+        <a class="nav-link" href="shop.html?category=Shoes" data-nav="shoes">Shoes</a>
+        <a class="nav-link" href="branches.html" data-nav="branches">Our Branches</a>
+        <div class="mobile-nav-extra">
+          <a class="nav-link" href="about.html" data-nav="about">About Us</a>
+          <a class="nav-link" href="contact.html" data-nav="contact">Contact</a>
+          <a class="nav-link mobile-cart-link" href="cart.html">Shopping Bag (<span class="mobile-cart-badge">0</span>)</a>
+          <a class="nav-link mobile-wa-link" href="https://wa.me/96176010841" target="_blank" rel="noopener">Chat on WhatsApp ↗</a>
+        </div>
       </nav>
       <div class="header-actions">
-        <button class="icon-button" id="searchToggle" aria-label="Search products" title="Search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg></button>
-        <button class="icon-button cart-button" id="cartToggle" aria-label="Open shopping bag" title="Shopping bag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l1 13H4L5 8Z"></path><path d="M9 9V6a3 3 0 0 1 6 0v3"></path></svg><span class="cart-count" id="cartCount">0</span></button>
+        <button class="icon-button" id="searchToggle" aria-label="Search products" title="Search">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg>
+        </button>
+        <button class="icon-button cart-button" id="cartToggle" aria-label="Open shopping bag" title="Shopping bag">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l1 13H4L5 8Z"></path><path d="M9 9V6a3 3 0 0 1 6 0v3"></path></svg>
+          <span class="cart-count" id="cartCount">0</span>
+        </button>
       </div>
     </div>
     <div class="search-panel" id="searchPanel" hidden>
-      <div class="container search-inner"><label for="siteSearch">What are you looking for?</label><div class="search-input-wrap"><input id="siteSearch" type="search" placeholder="Search jackets, sneakers, dresses..." autocomplete="off"><button class="button button-dark" id="searchSubmit">Search</button></div></div>
+      <div class="container search-inner">
+        <label for="siteSearch">What are you looking for?</label>
+        <div class="search-input-wrap">
+          <input id="siteSearch" type="search" placeholder="Search jackets, sneakers, hoodies..." autocomplete="off">
+          <button class="button button-dark" id="searchSubmit" type="button">Search</button>
+        </div>
+      </div>
     </div>
   </header>
 
   <main>
+    <!-- Hero Section -->
     <section class="hero-section" aria-label="Featured collection">
       <div class="hero-image" role="img" aria-label="Family wearing contemporary casual outfits"></div>
       <div class="hero-shade"></div>
       <div class="container hero-content">
         <p class="eyebrow eyebrow-light"><span class="eyebrow-line"></span> THE NEW SEASON</p>
         <h1>Style for<br>every generation<span>.</span></h1>
-        <p class="hero-description">Everyday favourites, fresh looks, and shoes for the whole family.</p>
-        <div class="hero-actions"><a href="#shop" class="button button-light">Explore the collection <span aria-hidden="true">↗</span></a><a href="#branches" class="hero-secondary-link">Find your nearest branch <span aria-hidden="true">→</span></a></div>
+        <p class="hero-description">Everyday favourites, fresh looks, and shoes for the whole family across our three Bekaa branches.</p>
+        <div class="hero-actions">
+          <a href="shop.html" class="button button-light">Explore the collection <span aria-hidden="true">↗</span></a>
+          <a href="branches.html" class="hero-secondary-link">Find your nearest branch <span aria-hidden="true">→</span></a>
+        </div>
         <div class="hero-index"><span class="hero-index-active"></span><span></span><span></span><small>01 / 03</small></div>
       </div>
       <div class="hero-side-note">FASHION FOR REAL LIFE</div>
     </section>
 
+    <!-- Categories Section -->
     <section class="category-section section-pad" aria-labelledby="categoriesHeading">
       <div class="container">
-        <div class="section-heading section-heading-row"><div><p class="eyebrow">FIND YOUR STYLE</p><h2 id="categoriesHeading">Something for everyone.</h2></div><p class="section-intro">From everyday essentials to the pieces that make an outfit.</p></div>
+        <div class="section-heading section-heading-row">
+          <div>
+            <p class="eyebrow">FIND YOUR STYLE</p>
+            <h2 id="categoriesHeading">Something for everyone.</h2>
+          </div>
+          <p class="section-intro">From everyday essentials to statement pieces for work, home, and weekends.</p>
+        </div>
         <div class="category-grid">
-          <a class="category-card category-women" href="#shop" data-category-link="Women"><img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=900&q=85" alt="Woman in a contemporary neutral outfit" loading="lazy"><span class="category-overlay"></span><span class="category-card-copy"><small>THE EDIT</small><strong>Women</strong><span>Explore collection <b>↗</b></span></span></a>
-          <a class="category-card category-men" href="#shop" data-category-link="Men"><img src="https://images.unsplash.com/photo-1516257984-b1b4d707412e?auto=format&fit=crop&w=900&q=85" alt="Men's contemporary fashion" loading="lazy"><span class="category-overlay"></span><span class="category-card-copy"><small>MADE FOR EVERY DAY</small><strong>Men</strong><span>Explore collection <b>↗</b></span></span></a>
-          <a class="category-card category-kids" href="#shop" data-category-link="Kids"><img src="https://images.unsplash.com/photo-1503919005314-30d93d07d823?auto=format&fit=crop&w=900&q=85" alt="Children in casual clothing" loading="lazy"><span class="category-overlay"></span><span class="category-card-copy"><small>LITTLE BIG STYLE</small><strong>Kids</strong><span>Explore collection <b>↗</b></span></span></a>
-          <a class="category-card category-shoes" href="#shop" data-category-link="Shoes"><img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=85" alt="Statement sneaker" loading="lazy"><span class="category-overlay"></span><span class="category-card-copy"><small>STEP OUT</small><strong>Shoes</strong><span>Explore collection <b>↗</b></span></span></a>
+          <a class="category-card category-women" href="shop.html?category=Women">
+            <img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=900&q=85" alt="Woman in a contemporary neutral outfit" loading="lazy">
+            <span class="category-overlay"></span>
+            <span class="category-card-copy">
+              <small>THE EDIT</small>
+              <strong>Women</strong>
+              <span>Explore collection <b>↗</b></span>
+            </span>
+          </a>
+          <a class="category-card category-men" href="shop.html?category=Men">
+            <img src="https://images.unsplash.com/photo-1516257984-b1b4d707412e?auto=format&fit=crop&w=900&q=85" alt="Men's contemporary fashion" loading="lazy">
+            <span class="category-overlay"></span>
+            <span class="category-card-copy">
+              <small>MADE FOR EVERY DAY</small>
+              <strong>Men</strong>
+              <span>Explore collection <b>↗</b></span>
+            </span>
+          </a>
+          <a class="category-card category-kids" href="shop.html?category=Kids">
+            <img src="https://images.unsplash.com/photo-1503919005314-30d93d07d823?auto=format&fit=crop&w=900&q=85" alt="Children in casual clothing" loading="lazy">
+            <span class="category-overlay"></span>
+            <span class="category-card-copy">
+              <small>LITTLE BIG STYLE</small>
+              <strong>Kids</strong>
+              <span>Explore collection <b>↗</b></span>
+            </span>
+          </a>
+          <a class="category-card category-shoes" href="shop.html?category=Shoes">
+            <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=85" alt="Statement sneaker" loading="lazy">
+            <span class="category-overlay"></span>
+            <span class="category-card-copy">
+              <small>STEP OUT</small>
+              <strong>Shoes</strong>
+              <span>Explore collection <b>↗</b></span>
+            </span>
+          </a>
         </div>
       </div>
     </section>
 
-    <section class="service-strip" aria-label="Store benefits"><div class="container service-grid"><div class="service-item"><span class="service-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v11H3zM14 11h4l3 3v4h-7z"></path><circle cx="7" cy="19" r="2"></circle><circle cx="18" cy="19" r="2"></circle></svg></span><div><strong>Delivery available</strong><small>Ask us about your area</small></div></div><div class="service-item"><span class="service-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 20 7v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4Z"></path><path d="m8.5 12 2.2 2.2 4.8-5"></path></svg></span><div><strong>Local &amp; trusted</strong><small>Three convenient branches</small></div></div><div class="service-item"><span class="service-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-11.1 6.6L4 19l.9-4.5A7.5 7.5 0 1 1 20 11.5Z"></path><path d="M9 9.2c.7 2 1.8 3.1 3.8 3.8"></path></svg></span><div><strong>Easy to reach</strong><small>Chat with us on WhatsApp</small></div></div><div class="service-item"><span class="service-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16v12H4zM8 8V5h8v3M4 12h16"></path><path d="M10 12v2h4v-2"></path></svg></span><div><strong>All in one place</strong><small>Women, men, kids &amp; shoes</small></div></div></div></section>
-
-    <section class="products-section section-pad" id="shop" aria-labelledby="newArrivalsHeading">
-      <div class="container" id="new-arrivals">
-        <div class="section-heading section-heading-row"><div><p class="eyebrow">JUST LANDED</p><h2 id="new-arrivals-heading">New arrivals<span class="heading-period">.</span></h2></div><a class="text-link" href="#shop" data-category-link="All">Shop all products <span>↗</span></a></div>
-        <div class="product-toolbar"><div class="filter-chips" id="categoryFilters" aria-label="Filter products"><button class="filter-chip active" data-filter="All">All</button><button class="filter-chip" data-filter="Women">Women</button><button class="filter-chip" data-filter="Men">Men</button><button class="filter-chip" data-filter="Kids">Kids</button><button class="filter-chip" data-filter="Shoes">Shoes</button></div><span class="product-count" id="productCount">Showing sample products</span></div>
-        <div class="product-grid" id="productGrid" aria-live="polite"></div>
-        <div class="center-action"><a class="button button-outline" href="#shop" data-category-link="All">Explore all products <span>→</span></a></div>
+    <!-- Service Strip -->
+    <section class="service-strip" aria-label="Store benefits">
+      <div class="container service-grid">
+        <div class="service-item">
+          <span class="service-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v11H3zM14 11h4l3 3v4h-7z"></path><circle cx="7" cy="19" r="2"></circle><circle cx="18" cy="19" r="2"></circle></svg>
+          </span>
+          <div>
+            <strong>Delivery available</strong>
+            <small>Contact us for your area in Lebanon</small>
+          </div>
+        </div>
+        <div class="service-item">
+          <span class="service-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 20 7v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4Z"></path><path d="m8.5 12 2.2 2.2 4.8-5"></path></svg>
+          </span>
+          <div>
+            <strong>Local &amp; trusted</strong>
+            <small>Three convenient branches</small>
+          </div>
+        </div>
+        <div class="service-item">
+          <span class="service-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-11.1 6.6L4 19l.9-4.5A7.5 7.5 0 1 1 20 11.5Z"></path><path d="M9 9.2c.7 2 1.8 3.1 3.8 3.8"></path></svg>
+          </span>
+          <div>
+            <strong>Easy to reach</strong>
+            <small>Chat with us on WhatsApp</small>
+          </div>
+        </div>
+        <div class="service-item">
+          <span class="service-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16v12H4zM8 8V5h8v3M4 12h16"></path><path d="M10 12v2h4v-2"></path></svg>
+          </span>
+          <div>
+            <strong>All in one place</strong>
+            <small>Women, men, kids &amp; shoes</small>
+          </div>
+        </div>
       </div>
     </section>
 
-    <section class="campaign-section" id="featured-offer"><div class="campaign-image" role="img" aria-label="Neutral-toned contemporary fashion collection"></div><div class="campaign-content"><p class="eyebrow eyebrow-light">YOUR EVERYDAY EDIT</p><h2>Good style.<br>Great days.</h2><p>Discover easy-to-wear pieces for work, weekends, and everything in between.</p><a href="#shop" class="button button-light" data-category-link="All">Discover the collection <span>↗</span></a><small class="campaign-disclaimer">Demo campaign — no live promotion is currently advertised.</small></div></section>
+    <!-- New Arrivals Preview Section -->
+    <section class="products-section section-pad" id="new-arrivals" aria-labelledby="newArrivalsHeading">
+      <div class="container">
+        <div class="section-heading section-heading-row">
+          <div>
+            <p class="eyebrow">JUST LANDED</p>
+            <h2 id="newArrivalsHeading">New arrivals<span class="heading-period">.</span></h2>
+          </div>
+          <a class="text-link" href="shop.html">Shop all 32+ products <span>↗</span></a>
+        </div>
+        <div class="product-toolbar">
+          <div class="filter-chips" id="categoryFilters" aria-label="Filter products">
+            <button class="filter-chip active" data-filter="All">All</button>
+            <button class="filter-chip" data-filter="Women">Women</button>
+            <button class="filter-chip" data-filter="Men">Men</button>
+            <button class="filter-chip" data-filter="Kids">Kids</button>
+            <button class="filter-chip" data-filter="Shoes">Shoes</button>
+          </div>
+          <span class="product-count" id="productCount">Loading sample products...</span>
+        </div>
+        <div class="product-grid" id="productGrid" aria-live="polite"></div>
+        <div class="center-action">
+          <a class="button button-outline" href="shop.html">Explore full catalog &amp; filters <span>→</span></a>
+        </div>
+      </div>
+    </section>
 
-    <section class="branches-section section-pad" id="branches"><div class="container"><div class="section-heading section-heading-row"><div><p class="eyebrow">COME SAY HELLO</p><h2>Three branches.<br class="mobile-break"> One Hamadan.</h2></div><p class="section-intro">Prefer to try it on in person? Find us at one of our locations.</p></div><div class="branch-grid">
-      <article class="branch-card"><div class="branch-number">01</div><div class="branch-content"><p class="branch-label">MAIN BRANCH</p><h3>Rayak</h3><p>Rayak / Zahle Highway</p><a href="https://www.google.com/maps/search/?api=1&query=Hamadan+Stores+Rayak+Zahle+Highway+Lebanon" target="_blank" rel="noopener" class="branch-link">Get directions <span>↗</span></a></div></article>
-      <article class="branch-card"><div class="branch-number">02</div><div class="branch-content"><p class="branch-label">OUR BRANCH</p><h3>Douris</h3><p>Douris / Baalbeck Highway</p><a href="https://www.google.com/maps/search/?api=1&query=Hamadan+Stores+Douris+Baalbeck+Highway+Lebanon" target="_blank" rel="noopener" class="branch-link">Get directions <span>↗</span></a></div></article>
-      <article class="branch-card"><div class="branch-number">03</div><div class="branch-content"><p class="branch-label">OUR BRANCH</p><h3>Taalabaya</h3><p>Taalabaya / Main Road</p><a href="https://www.google.com/maps/search/?api=1&query=Hamadan+Stores+Taalabaya+Main+Road+Lebanon" target="_blank" rel="noopener" class="branch-link">Get directions <span>↗</span></a></div></article>
-    </div></div></section>
+    <!-- Campaign Section -->
+    <section class="campaign-section" id="featured-offer">
+      <div class="campaign-image" role="img" aria-label="Neutral-toned contemporary fashion collection"></div>
+      <div class="campaign-content">
+        <p class="eyebrow eyebrow-light">YOUR EVERYDAY EDIT</p>
+        <h2>Good style.<br>Great days.</h2>
+        <p>Discover easy-to-wear pieces for work, weekends, and everything in between for the entire family.</p>
+        <a href="shop.html" class="button button-light">Discover the collection <span>↗</span></a>
+        <small class="campaign-disclaimer">Demo campaign presentation — sample items and prices.</small>
+      </div>
+    </section>
 
-    <section class="social-section"><div class="container social-inner"><div><p class="eyebrow">LET'S STAY CONNECTED</p><h2>Your next favourite<br>look is waiting.</h2><p>Questions about a product or delivery? Our team is just a message away.</p></div><a class="button button-dark" href="https://wa.me/96176010841" target="_blank" rel="noopener"><span class="whatsapp-symbol">◉</span> Chat on WhatsApp <span>↗</span></a></div></section>
+    <!-- Branches Section -->
+    <section class="branches-section section-pad" id="branches">
+      <div class="container">
+        <div class="section-heading section-heading-row">
+          <div>
+            <p class="eyebrow">COME SAY HELLO</p>
+            <h2>Three branches.<br class="mobile-break"> One Hamadan.</h2>
+          </div>
+          <p class="section-intro">Prefer to try on in person or pick up an order? Visit one of our Bekaa locations.</p>
+        </div>
+        <div class="branch-grid">
+          <article class="branch-card">
+            <div class="branch-number">01</div>
+            <div class="branch-content">
+              <p class="branch-label">MAIN BRANCH</p>
+              <h3>Rayak</h3>
+              <p>Rayak / Zahle Highway</p>
+              <a href="https://www.google.com/maps/search/?api=1&query=Hamadan+Stores+Rayak+Zahle+Highway+Lebanon" target="_blank" rel="noopener" class="branch-link">Get directions <span>↗</span></a>
+            </div>
+          </article>
+          <article class="branch-card">
+            <div class="branch-number">02</div>
+            <div class="branch-content">
+              <p class="branch-label">OUR BRANCH</p>
+              <h3>Douris</h3>
+              <p>Douris / Baalbeck Highway</p>
+              <a href="https://www.google.com/maps/search/?api=1&query=Hamadan+Stores+Douris+Baalbeck+Highway+Lebanon" target="_blank" rel="noopener" class="branch-link">Get directions <span>↗</span></a>
+            </div>
+          </article>
+          <article class="branch-card">
+            <div class="branch-number">03</div>
+            <div class="branch-content">
+              <p class="branch-label">OUR BRANCH</p>
+              <h3>Taalabaya</h3>
+              <p>Taalabaya / Main Road</p>
+              <a href="https://www.google.com/maps/search/?api=1&query=Hamadan+Stores+Taalabaya+Main+Road+Lebanon" target="_blank" rel="noopener" class="branch-link">Get directions <span>↗</span></a>
+            </div>
+          </article>
+        </div>
+        <div class="center-action" style="margin-top: 32px;">
+          <a class="button button-outline" href="branches.html">View detailed branch info &amp; services <span>→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Social / WhatsApp CTA Section -->
+    <section class="social-section">
+      <div class="container social-inner">
+        <div>
+          <p class="eyebrow">LET'S STAY CONNECTED</p>
+          <h2>Your next favourite<br>look is waiting.</h2>
+          <p>Questions about sizing, product availability, or delivery? Our team is available on WhatsApp.</p>
+        </div>
+        <a class="button button-dark" href="https://wa.me/96176010841" target="_blank" rel="noopener">
+          <span class="whatsapp-symbol">◉</span> Chat on WhatsApp (+961 76 010 841) <span>↗</span>
+        </a>
+      </div>
+    </section>
   </main>
 
-  <footer class="site-footer"><div class="container footer-main"><div class="footer-brand"><a class="wordmark wordmark-footer" href="#top"><span>HAMADAN</span><small>STORES</small></a><p>Style for every generation.</p><a href="https://wa.me/96176010841" target="_blank" rel="noopener" class="footer-contact">WhatsApp · 76 010 841</a></div><div class="footer-column"><h3>Explore</h3><a href="#shop" data-category-link="Women">Women</a><a href="#shop" data-category-link="Men">Men</a><a href="#shop" data-category-link="Kids">Kids</a><a href="#shop" data-category-link="Shoes">Shoes</a></div><div class="footer-column"><h3>Visit us</h3><a href="#branches">Our branches</a><a href="https://wa.me/96176010841" target="_blank" rel="noopener">Contact on WhatsApp</a><a href="#featured-offer">Campaigns</a></div><div class="footer-note"><p class="eyebrow">MADE FOR REAL LIFE</p><p>Everyday fashion for every member of the family.</p></div></div><div class="container footer-bottom"><span>© <span id="currentYear"></span> Hamadan Stores. All rights reserved.</span><span class="demo-label">Concept demo · Sample products and prices</span></div></footer>
+  <!-- Shared Footer -->
+  <footer class="site-footer">
+    <div class="container footer-main">
+      <div class="footer-brand">
+        <a class="wordmark wordmark-footer" href="index.html"><span>HAMADAN</span><small>STORES</small></a>
+        <p>Style for every generation. Family clothing and footwear across three physical branches in Lebanon with direct WhatsApp service.</p>
+        <a href="https://wa.me/96176010841" target="_blank" rel="noopener" class="footer-contact">WhatsApp: +961 76 010 841</a>
+      </div>
+      <div class="footer-column">
+        <h3>Collections</h3>
+        <a href="shop.html">All Products</a>
+        <a href="shop.html?category=Women">Women</a>
+        <a href="shop.html?category=Men">Men</a>
+        <a href="shop.html?category=Kids">Kids</a>
+        <a href="shop.html?category=Shoes">Shoes</a>
+      </div>
+      <div class="footer-column">
+        <h3>Information</h3>
+        <a href="branches.html">Our Branches</a>
+        <a href="about.html">About Us</a>
+        <a href="contact.html">Contact Us</a>
+        <a href="cart.html">Shopping Bag</a>
+        <a href="checkout.html">Checkout Demo</a>
+      </div>
+      <div class="footer-note">
+        <p class="eyebrow">THREE LOCATIONS</p>
+        <p>Rayak · Douris · Taalabaya</p>
+        <p style="font-size: 11px; color: #a9a39a; margin-top: 8px;">Clothing &amp; footwear for real life across Lebanon.</p>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <span>© <span id="currentYear"></span> Hamadan Stores. All rights reserved.</span>
+      <span class="demo-label">Concept Demo Prototype · Sample products, stock &amp; prices</span>
+    </div>
+  </footer>
 
+  <!-- Shared Cart Drawer -->
   <div class="drawer-backdrop" id="drawerBackdrop" hidden></div>
-  <aside class="cart-drawer" id="cartDrawer" aria-labelledby="cartHeading" aria-hidden="true"><div class="drawer-header"><div><p class="eyebrow">YOUR SELECTION</p><h2 id="cartHeading">Shopping bag <span id="drawerCartCount">(0)</span></h2></div><button class="icon-button" id="cartClose" aria-label="Close shopping bag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"></path></svg></button></div><div class="cart-demo-notice">Demo mode: cart data is stored only in this browser.</div><div class="cart-items" id="cartItems"></div><div class="cart-empty" id="cartEmpty"><div class="empty-bag">◇</div><h3>Your bag is waiting</h3><p>Find something for everyone.</p><button class="button button-dark" id="continueShopping">Continue shopping</button></div><div class="drawer-footer" id="drawerFooter" hidden><div class="subtotal-row"><span>Subtotal</span><strong id="cartSubtotal">$0.00</strong></div><p>Delivery cost will be confirmed by the store.</p><button class="button button-dark button-full" id="checkoutButton">Continue to checkout <span>→</span></button><a class="whatsapp-checkout" id="whatsappCheckout" href="https://wa.me/96176010841" target="_blank" rel="noopener">Or send your selection on WhatsApp ↗</a></div></aside>
+  <aside class="cart-drawer" id="cartDrawer" aria-labelledby="cartHeading" aria-hidden="true">
+    <div class="drawer-header">
+      <div>
+        <p class="eyebrow">YOUR SELECTION</p>
+        <h2 id="cartHeading">Shopping bag <span id="drawerCartCount">(0)</span></h2>
+      </div>
+      <button class="icon-button" id="cartClose" aria-label="Close shopping bag">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"></path></svg>
+      </button>
+    </div>
+    <div class="cart-demo-notice">Demo mode: Cart is saved in your browser's localStorage.</div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-empty" id="cartEmpty">
+      <div class="empty-bag">◇</div>
+      <h3>Your bag is waiting</h3>
+      <p>Find something for everyone in the family.</p>
+      <a class="button button-dark" href="shop.html" id="continueShopping">Explore the shop</a>
+    </div>
+    <div class="drawer-footer" id="drawerFooter" hidden>
+      <div class="subtotal-row">
+        <span>Estimated Subtotal</span>
+        <strong id="cartSubtotal">$0.00</strong>
+      </div>
+      <p>Delivery or pickup confirmed with the store.</p>
+      <button class="button button-dark button-full" id="checkoutButton" type="button">Continue to checkout <span>→</span></button>
+      <a class="whatsapp-checkout" id="whatsappCheckout" href="https://wa.me/96176010841" target="_blank" rel="noopener">Or send your selection on WhatsApp ↗</a>
+      <div style="text-align: center; margin-top: 10px;">
+        <a href="cart.html" style="font-size: 11px; text-decoration: underline; color: var(--muted);">View full shopping bag page</a>
+      </div>
+    </div>
+  </aside>
 
+  <!-- Global Toast -->
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <div class="demo-banner" role="note"><span class="demo-banner-dot"></span> DEMO MODE <span>Sample products · No live stock or payments</span><button id="dismissDemoBanner" aria-label="Dismiss demo notice">×</button></div>
+
+  <!-- Demo Notice Banner -->
+  <div class="demo-banner" role="note">
+    <span class="demo-banner-dot"></span>
+    <strong>DEMO MODE</strong>
+    <span>Sample products &amp; prices · No live stock or payment processing</span>
+    <button id="dismissDemoBanner" aria-label="Dismiss demo notice">×</button>
+  </div>
 </body>
 </html>

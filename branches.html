@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#222222">
+  <meta name="description" content="Visit Hamadan Stores at our three branches: Rayak / Zahle Highway, Douris / Baalbeck Highway, and Taalabaya / Main Road.">
+  <title>Our Branches — Hamadan Stores</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <script src="js/products.js" defer></script>
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+  <!-- Announcement Bar -->
+  <div class="announcement-bar">
+    <div class="announcement-inner">
+      <span class="announcement-message">Style for every generation · Rayak · Douris · Taalabaya</span>
+      <a class="announcement-whatsapp" href="https://wa.me/96176010841" target="_blank" rel="noopener">
+        <span class="whatsapp-dot">●</span> WhatsApp: +961 76 010 841
+      </a>
+    </div>
+  </div>
+
+  <!-- Shared Site Header -->
+  <header class="site-header" id="top">
+    <div class="header-main container">
+      <button class="icon-button mobile-menu-toggle" id="mobileMenuToggle" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mainNav">
+        <span class="menu-lines"></span>
+      </button>
+      <a class="wordmark" href="index.html" aria-label="Hamadan Stores home">
+        <span>HAMADAN</span><small>STORES</small>
+      </a>
+      <nav class="main-nav" id="mainNav" aria-label="Main navigation">
+        <a class="nav-link" href="index.html" data-nav="home">Home</a>
+        <a class="nav-link" href="shop.html" data-nav="shop">Shop</a>
+        <a class="nav-link" href="shop.html?category=Women" data-nav="women">Women</a>
+        <a class="nav-link" href="shop.html?category=Men" data-nav="men">Men</a>
+        <a class="nav-link" href="shop.html?category=Kids" data-nav="kids">Kids</a>
+        <a class="nav-link" href="shop.html?category=Shoes" data-nav="shoes">Shoes</a>
+        <a class="nav-link active" href="branches.html" data-nav="branches">Our Branches</a>
+        <div class="mobile-nav-extra">
+          <a class="nav-link" href="about.html" data-nav="about">About Us</a>
+          <a class="nav-link" href="contact.html" data-nav="contact">Contact</a>
+          <a class="nav-link mobile-cart-link" href="cart.html">Shopping Bag (<span class="mobile-cart-badge">0</span>)</a>
+          <a class="nav-link mobile-wa-link" href="https://wa.me/96176010841" target="_blank" rel="noopener">Chat on WhatsApp ↗</a>
+        </div>
+      </nav>
+      <div class="header-actions">
+        <button class="icon-button" id="searchToggle" aria-label="Search products" title="Search">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg>
+        </button>
+        <button class="icon-button cart-button" id="cartToggle" aria-label="Open shopping bag" title="Shopping bag">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l1 13H4L5 8Z"></path><path d="M9 9V6a3 3 0 0 1 6 0v3"></path></svg>
+          <span class="cart-count" id="cartCount">0</span>
+        </button>
+      </div>
+    </div>
+    <div class="search-panel" id="searchPanel" hidden>
+      <div class="container search-inner">
+        <label for="siteSearch">What are you looking for?</label>
+        <div class="search-input-wrap">
+          <input id="siteSearch" type="search" placeholder="Search jackets, sneakers, hoodies..." autocomplete="off">
+          <button class="button button-dark" id="searchSubmit" type="button">Search</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Page Header & Breadcrumbs -->
+    <section class="page-header">
+      <div class="container">
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+          <a href="index.html">Home</a>
+          <span class="crumb-sep">/</span>
+          <span class="crumb-current">Our Branches</span>
+        </nav>
+        <h1>Our Three Branches<span class="heading-period">.</span></h1>
+        <p>Hamadan Stores serves families throughout the Bekaa Valley from three physical retail branches. Visit us in person to try on clothing and shoes, or pick up your reserved items.</p>
+      </div>
+    </section>
+
+    <!-- Branches List Section -->
+    <section class="section-pad">
+      <div class="container">
+        <p class="branches-header-note">
+          Each of our locations features curated collections for women, men, children, and footwear. For specific item availability at a given location, message us on WhatsApp with the product SKU.
+        </p>
+
+        <!-- 3 Branch Cards Grid -->
+        <div class="branches-page-grid">
+          <!-- Branch 1 -->
+          <article class="branch-full-card">
+            <span class="branch-badge">Main Branch</span>
+            <h2>Rayak</h2>
+            <p class="branch-address-text">
+              <strong>Rayak / Zahle Highway</strong><br>
+              Situated along the main highway connecting Rayak and Zahle, this flagship store carries our broadest assortment across all four core fashion categories.
+            </p>
+            <div class="branch-actions">
+              <a href="https://www.google.com/maps/search/?api=1&query=Hamadan+Stores+Rayak+Zahle+Highway+Lebanon" target="_blank" rel="noopener" class="branch-link">
+                Get directions on Google Maps <span>↗</span>
+              </a>
+              <a href="https://wa.me/96176010841?text=Hello%20Hamadan%20Stores!%20I%20have%20an%20inquiry%20regarding%20the%20Rayak%20branch." target="_blank" rel="noopener" style="font-size: 11px; color: var(--green); font-weight: 700; margin-top: 6px;">
+                Chat on WhatsApp about Rayak branch ↗
+              </a>
+            </div>
+          </article>
+
+          <!-- Branch 2 -->
+          <article class="branch-full-card">
+            <span class="branch-badge">Branch 02</span>
+            <h2>Douris</h2>
+            <p class="branch-address-text">
+              <strong>Douris / Baalbeck Highway</strong><br>
+              Conveniently located along the Baalbeck Highway in Douris, catering to northern Bekaa shoppers with everyday family staples, seasonal outerwear, and sneakers.
+            </p>
+            <div class="branch-actions">
+              <a href="https://www.google.com/maps/search/?api=1&query=Hamadan+Stores+Douris+Baalbeck+Highway+Lebanon" target="_blank" rel="noopener" class="branch-link">
+                Get directions on Google Maps <span>↗</span>
+              </a>
+              <a href="https://wa.me/96176010841?text=Hello%20Hamadan%20Stores!%20I%20have%20an%20inquiry%20regarding%20the%20Douris%20branch." target="_blank" rel="noopener" style="font-size: 11px; color: var(--green); font-weight: 700; margin-top: 6px;">
+                Chat on WhatsApp about Douris branch ↗
+              </a>
+            </div>
+          </article>
+
+          <!-- Branch 3 -->
+          <article class="branch-full-card">
+            <span class="branch-badge">Branch 03</span>
+            <h2>Taalabaya</h2>
+            <p class="branch-address-text">
+              <strong>Taalabaya / Main Road</strong><br>
+              Located on the bustling Taalabaya Main Road. Offers rapid roadside access for quick family outfit pickups, footwear fittings, and weekend shopping.
+            </p>
+            <div class="branch-actions">
+              <a href="https://www.google.com/maps/search/?api=1&query=Hamadan+Stores+Taalabaya+Main+Road+Lebanon" target="_blank" rel="noopener" class="branch-link">
+                Get directions on Google Maps <span>↗</span>
+              </a>
+              <a href="https://wa.me/96176010841?text=Hello%20Hamadan%20Stores!%20I%20have%20an%20inquiry%20regarding%20the%20Taalabaya%20branch." target="_blank" rel="noopener" style="font-size: 11px; color: var(--green); font-weight: 700; margin-top: 6px;">
+                Chat on WhatsApp about Taalabaya branch ↗
+              </a>
+            </div>
+          </article>
+        </div>
+
+        <!-- Branch Tips & Pickup Info -->
+        <div class="branch-tips-box">
+          <h3>In-Store Services &amp; Visiting Tips</h3>
+          <p style="font-size: 13px; color: var(--muted); margin: 0;">Visiting our branches gives you the benefit of trying on apparel and shoes with our team's guidance.</p>
+          <div class="branch-tips-grid">
+            <div>
+              <strong>Fitting &amp; Try-On</strong>
+              <p style="color: var(--muted); margin: 0;">Find your exact size across shoe brands and clothing cuts before making your purchase.</p>
+            </div>
+            <div>
+              <strong>Order Pickup</strong>
+              <p style="color: var(--muted); margin: 0;">Select "Branch Pickup" when inquiring to reserve pieces at your preferred branch free of delivery charge.</p>
+            </div>
+            <div>
+              <strong>Direct WhatsApp Support</strong>
+              <p style="color: var(--muted); margin: 0;">Need to confirm if an item or size is in stock right now? Message our main line at +961 76 010 841.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Social / WhatsApp Banner -->
+    <section class="social-section">
+      <div class="container social-inner">
+        <div>
+          <p class="eyebrow">READY TO VISIT?</p>
+          <h2>We look forward to<br>welcoming you.</h2>
+          <p>Get in touch on WhatsApp before your visit to verify real-time branch availability.</p>
+        </div>
+        <a class="button button-dark" href="https://wa.me/96176010841" target="_blank" rel="noopener">
+          <span class="whatsapp-symbol">◉</span> Chat on WhatsApp (+961 76 010 841) <span>↗</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Shared Footer -->
+  <footer class="site-footer">
+    <div class="container footer-main">
+      <div class="footer-brand">
+        <a class="wordmark wordmark-footer" href="index.html"><span>HAMADAN</span><small>STORES</small></a>
+        <p>Style for every generation. Family clothing and footwear across three physical branches in Lebanon with direct WhatsApp service.</p>
+        <a href="https://wa.me/96176010841" target="_blank" rel="noopener" class="footer-contact">WhatsApp: +961 76 010 841</a>
+      </div>
+      <div class="footer-column">
+        <h3>Collections</h3>
+        <a href="shop.html">All Products</a>
+        <a href="shop.html?category=Women">Women</a>
+        <a href="shop.html?category=Men">Men</a>
+        <a href="shop.html?category=Kids">Kids</a>
+        <a href="shop.html?category=Shoes">Shoes</a>
+      </div>
+      <div class="footer-column">
+        <h3>Information</h3>
+        <a href="branches.html">Our Branches</a>
+        <a href="about.html">About Us</a>
+        <a href="contact.html">Contact Us</a>
+        <a href="cart.html">Shopping Bag</a>
+        <a href="checkout.html">Checkout Demo</a>
+      </div>
+      <div class="footer-note">
+        <p class="eyebrow">THREE LOCATIONS</p>
+        <p>Rayak · Douris · Taalabaya</p>
+        <p style="font-size: 11px; color: #a9a39a; margin-top: 8px;">Clothing &amp; footwear for real life across Lebanon.</p>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <span>© <span id="currentYear"></span> Hamadan Stores. All rights reserved.</span>
+      <span class="demo-label">Concept Demo Prototype · Sample products, stock &amp; prices</span>
+    </div>
+  </footer>
+
+  <!-- Shared Cart Drawer -->
+  <div class="drawer-backdrop" id="drawerBackdrop" hidden></div>
+  <aside class="cart-drawer" id="cartDrawer" aria-labelledby="cartHeading" aria-hidden="true">
+    <div class="drawer-header">
+      <div>
+        <p class="eyebrow">YOUR SELECTION</p>
+        <h2 id="cartHeading">Shopping bag <span id="drawerCartCount">(0)</span></h2>
+      </div>
+      <button class="icon-button" id="cartClose" aria-label="Close shopping bag">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"></path></svg>
+      </button>
+    </div>
+    <div class="cart-demo-notice">Demo mode: Cart is saved in your browser's localStorage.</div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-empty" id="cartEmpty">
+      <div class="empty-bag">◇</div>
+      <h3>Your bag is waiting</h3>
+      <p>Find something for everyone in the family.</p>
+      <a class="button button-dark" href="shop.html" id="continueShopping">Explore the shop</a>
+    </div>
+    <div class="drawer-footer" id="drawerFooter" hidden>
+      <div class="subtotal-row">
+        <span>Estimated Subtotal</span>
+        <strong id="cartSubtotal">$0.00</strong>
+      </div>
+      <p>Delivery or pickup confirmed with the store.</p>
+      <button class="button button-dark button-full" id="checkoutButton" type="button">Continue to checkout <span>→</span></button>
+      <a class="whatsapp-checkout" id="whatsappCheckout" href="https://wa.me/96176010841" target="_blank" rel="noopener">Or send your selection on WhatsApp ↗</a>
+    </div>
+  </aside>
+
+  <!-- Global Toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- Demo Notice Banner -->
+  <div class="demo-banner" role="note">
+    <span class="demo-banner-dot"></span>
+    <strong>DEMO MODE</strong>
+    <span>Sample products &amp; prices · No live stock or payment processing</span>
+    <button id="dismissDemoBanner" aria-label="Dismiss demo notice">×</button>
+  </div>
+</body>
+</html>
